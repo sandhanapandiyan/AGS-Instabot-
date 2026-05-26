@@ -28,6 +28,8 @@ if _missing:
 
 PRESET_COUNTS = range(0, 7)  # quick-tap buttons 0..6; "Custom" covers anything higher
 MAX_TICKETS = 100
+ADULT_PRICE = 800  # ₹ per adult ticket
+CHILD_PRICE = 450  # ₹ per child ticket
 # Steps that expect the user to type free text (not tap a button):
 TEXT_STEPS = {"custom_adult", "custom_child", "await_name", "await_whatsapp"}
 GREETINGS = {"hi", "hii", "hiii", "hai", "hello", "helo", "hey", "start", "menu"}
@@ -80,6 +82,18 @@ def quick_reply(title: str, payload: str) -> dict:
 
 def session(recipient_id: str) -> dict:
     return SESSIONS.setdefault(recipient_id, {"adult": 0, "child": 0, "step": None})
+
+
+def price_summary(s: dict) -> str:
+    """Price breakdown lines: per-type subtotals, ticket count, and grand total (₹)."""
+    adult_amt = s["adult"] * ADULT_PRICE
+    child_amt = s["child"] * CHILD_PRICE
+    return (
+        f"👤 Adult: {s['adult']} × ₹{ADULT_PRICE} = ₹{adult_amt:,}\n"
+        f"🧒 Child: {s['child']} × ₹{CHILD_PRICE} = ₹{child_amt:,}\n"
+        f"🎫 Total tickets: {s['adult'] + s['child']}\n"
+        f"💰 Total amount: ₹{adult_amt + child_amt:,}"
+    )
 
 
 # --- Menus / pickers ------------------------------------------------------
@@ -141,15 +155,12 @@ async def send_child_picker(recipient_id: str) -> None:
 async def send_ticket_confirm(recipient_id: str) -> None:
     s = session(recipient_id)
     s["step"] = "confirm"
-    total = s["adult"] + s["child"]
     await send_message(
         recipient_id,
         {
             "text": (
                 "🎟️ Your AGS Wonder World tickets\n\n"
-                f"👤 Adult: {s['adult']}\n"
-                f"🧒 Child: {s['child']}\n"
-                f"🎫 Total: {total}\n\n"
+                f"{price_summary(s)}\n\n"
                 "All good?"
             ),
             "quick_replies": [
@@ -208,16 +219,13 @@ async def send_contact_confirm(recipient_id: str) -> None:
 async def send_final_confirm(recipient_id: str) -> None:
     s = session(recipient_id)
     s["step"] = "final_confirm"
-    total = s["adult"] + s["child"]
     await send_message(
         recipient_id,
         {
             "text": (
                 "🧾 Please review your full booking 👇\n\n"
                 "🎢 AGS Wonder World\n"
-                f"👤 Adult: {s['adult']}\n"
-                f"🧒 Child: {s['child']}\n"
-                f"🎫 Total tickets: {total}\n\n"
+                f"{price_summary(s)}\n\n"
                 f"📝 Name: {s.get('name')}\n"
                 f"📱 WhatsApp number: {s.get('whatsapp')}\n\n"
                 "Shall we confirm this booking?"
