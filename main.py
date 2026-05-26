@@ -103,8 +103,8 @@ async def send_main_menu(recipient_id: str) -> None:
         recipient_id,
         {
             "text": (
-                "Hi there! 🌸 Welcome to AGS — so happy you're here!\n\n"
-                "Which experience would you like to explore today? 👇"
+                "Hi there! Welcome to AGS — so happy you're here!\n\n"
+                "Which experience would you like to explore today?"
             ),
             "quick_replies": [
                 quick_reply("🌴 AGS RESORT", "AGS_RESORT"),
@@ -192,7 +192,7 @@ async def ask_whatsapp(recipient_id: str) -> None:
     session(recipient_id)["step"] = "await_whatsapp"
     await send_message(
         recipient_id,
-        {"text": "📱 Please type your WhatsApp number with country code (e.g. +91 98765 43210):"},
+        {"text": "Please type your WhatsApp number(e.g98765 43210):"},
     )
 
 
@@ -203,9 +203,9 @@ async def send_contact_confirm(recipient_id: str) -> None:
         recipient_id,
         {
             "text": (
-                "Please confirm your details 👇\n\n"
-                f"📝 Name: {s.get('name')}\n"
-                f"📱 WhatsApp number: {s.get('whatsapp')}\n\n"
+                "Please confirm your details\n\n"
+                f"Name: {s.get('name')}\n"
+                f"WhatsApp number: {s.get('whatsapp')}\n\n"
                 "Is this correct?"
             ),
             "quick_replies": [
@@ -226,8 +226,8 @@ async def send_final_confirm(recipient_id: str) -> None:
                 "🧾 Please review your full booking 👇\n\n"
                 "🎢 AGS Wonder World\n"
                 f"{price_summary(s)}\n\n"
-                f"📝 Name: {s.get('name')}\n"
-                f"📱 WhatsApp number: {s.get('whatsapp')}\n\n"
+                f"Name: {s.get('name')}\n"
+                f"WhatsApp number: {s.get('whatsapp')}\n\n"
                 "Shall we confirm this booking?"
             ),
             "quick_replies": [
@@ -245,7 +245,7 @@ async def send_booking_done(recipient_id: str) -> None:
         recipient_id,
         {
             "text": (
-                "✅ Booking confirmed! 🎉\n\n"
+                "Booking confirmed! 🎉\n\n"
                 f"🎟️ Your tickets will be sent to your WhatsApp number {whatsapp}.\n\n"
                 "Thank you for choosing AGS Wonder World! 💛"
             ),
